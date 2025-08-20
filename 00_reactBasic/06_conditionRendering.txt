@@ -1,0 +1,75 @@
+Conditional rendering in React means showing (or hiding) different UI elements based on a condition — like “if this is true, show X; else show Y”.
+
+It’s basically JavaScript conditions inside JSX.
+React doesn’t have a special “if” keyword — you just use normal JS logic to decide what to render.
+
+1. Why it’s needed
+
+Sometimes you don’t want to display everything all the time:
+
+Show login button if the user is logged out.
+
+Show profile if the user is logged in.
+
+Display loading spinner until data arrives.
+
+2. Common ways to do conditional rendering
+A. if statements
+
+You can return different components based on a condition.
+
+function App({ isLoggedIn }) {
+  if (isLoggedIn) {
+    return <h1>Welcome back!</h1>;
+  }
+  return <h1>Please log in</h1>;
+}
+
+B. Ternary operator (condition ? A : B)
+
+Good for inline usage.
+
+function App({ isLoggedIn }) {
+  return (
+    <div>
+      {isLoggedIn ? <h1>Welcome back!</h1> : <h1>Please log in</h1>}
+    </div>
+  );
+}
+
+C. Logical AND (condition && JSX)
+
+Shows something only if the condition is true.
+
+function App({ hasMessages }) {
+  return (
+    <div>
+      {hasMessages && <p>You have new messages!</p>}
+    </div>
+  );
+}
+
+D. Using functions for cleaner logic
+function getGreeting(isLoggedIn) {
+  return isLoggedIn ? "Welcome back!" : "Please log in";
+}
+
+function App({ isLoggedIn }) {
+  return <h1>{getGreeting(isLoggedIn)}</h1>;
+}
+
+3. Key points
+
+React will skip rendering a part if the expression evaluates to:
+
+false
+
+null
+
+undefined
+
+true (without JSX)
+
+You can mix conditional rendering with props and children.
+
+Avoid overly complex inline conditions — extract them into variables or functions.

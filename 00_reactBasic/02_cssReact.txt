@@ -1,0 +1,124 @@
+In React, CSS can be applied in multiple ways — from plain old .css files to advanced CSS-in-JS solutions.
+Here’s the deep dive so you know all the options.
+
+1. Plain CSS (Global Styles)
+
+You create a .css file and import it into your component (or index.js).
+
+Styles apply globally (not scoped to a single component).
+
+Example:
+
+/* App.css */
+.title {
+  color: red;
+}
+
+import "./App.css";
+
+function App() {
+  return <h1 className="title">Hello</h1>;
+}
+
+
+Pros: Simple, works like normal CSS.
+Cons: Can cause style conflicts between components.
+
+2. CSS Modules (Scoped Styles)
+
+File name must be ComponentName.module.css.
+
+Classes are automatically scoped to that component (no global leaks).
+
+Example:
+
+/* Button.module.css */
+.btn {
+  background: blue;
+  color: white;
+}
+
+import styles from "./Button.module.css";
+
+function Button() {
+  return <button className={styles.btn}>Click Me</button>;
+}
+
+
+Pros: No class name conflicts.
+Cons: Slightly more setup (but built-in with Create React App, Vite, Next.js).
+
+3. Inline Styles
+
+Use the style prop with a JavaScript object.
+
+Property names use camelCase instead of kebab-case.
+
+Example:
+
+function App() {
+  return <h1 style={{ color: "blue", backgroundColor: "lightgray" }}>Hello</h1>;
+}
+
+
+Pros: Quick for dynamic styles.
+Cons: No pseudo-classes (:hover) or media queries directly.
+
+4. CSS-in-JS Libraries
+
+Libraries like styled-components, Emotion, or JSS let you write CSS inside JavaScript.
+
+Styles are scoped and dynamic.
+
+Example (styled-components):
+
+import styled from "styled-components";
+
+const Title = styled.h1`
+  color: purple;
+  font-size: 24px;
+`;
+
+function App() {
+  return <Title>Hello</Title>;
+}
+
+
+Pros: Scoped, supports themes, dynamic styling.
+Cons: Adds dependencies, slightly larger bundle.
+
+5. Tailwind CSS (Utility-first CSS)
+
+You add classes directly to elements.
+
+No need to write custom CSS for many common styles.
+
+Example:
+
+function App() {
+  return <h1 className="text-red-500 bg-gray-200 p-4">Hello</h1>;
+}
+
+
+Pros: Very fast to build UIs, responsive utilities built-in.
+Cons: Can look messy with too many classes in JSX.
+
+6. Dynamic Styling in React
+
+You can change styles based on state or props:
+
+function Button({ isActive }) {
+  return (
+    <button style={{ backgroundColor: isActive ? "green" : "gray" }}>
+      {isActive ? "Active" : "Inactive"}
+    </button>
+  );
+}
+
+7. Best Practices
+
+Use CSS Modules or CSS-in-JS for large apps to avoid conflicts.
+
+Inline styles are great for dynamic but simple styles.
+
+Keep styles component-specific for maintainability.

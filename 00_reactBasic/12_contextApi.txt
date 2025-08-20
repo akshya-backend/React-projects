@@ -1,0 +1,193 @@
+React Context API - Deep Dive
+
+1. What is Context API?
+
+The Context API is a feature in React that allows developers to share
+state or data across the component tree without having to pass props
+down manually at every level (a problem known as “prop drilling”).
+
+It was introduced in React v16.3 as a stable feature, replacing the
+older, unstable context.
+
+------------------------------------------------------------------------
+
+2. Why Context API?
+
+Normally, data flows top-down through props. But if deeply nested
+components need access to global data (like theme, user authentication,
+or language preferences), passing props through multiple layers becomes
+messy.
+
+Prop Drilling Problem Example:
+
+    <App user={user}>
+      <Header user={user}>
+        <Nav user={user}>
+          <UserProfile user={user} />
+        </Nav>
+      </Header>
+    </App>
+
+Here, user is passed through components that don’t actually use it, just
+to get it to UserProfile.
+
+The Context API solves this by allowing components to directly access
+global data.
+
+------------------------------------------------------------------------
+
+3. Key Components of Context API
+
+1.  createContext()
+    -   Creates a new context object.
+    -   Example: const ThemeContext = createContext("light");
+2.  Provider
+    -   Used to wrap part of the app and supply a value to the context.
+    -   Example:
+
+        <ThemeContext.Provider value="dark">
+          <App />
+        </ThemeContext.Provider>
+3.  Consumer
+    -   Old way (before hooks) to access context inside components.
+    -   Example:
+
+        <ThemeContext.Consumer>
+          {value => <h1>Theme is {value}</h1>}
+        </ThemeContext.Consumer>
+4.  useContext Hook
+    -   Modern way to access context.
+    -   Example:
+
+        const theme = useContext(ThemeContext);
+
+------------------------------------------------------------------------
+
+4. Example with Context API
+
+Step 1: Create Context
+
+    import { createContext } from "react";
+
+    export const UserContext = createContext(null);
+
+Step 2: Provide Context
+
+    import { useState } from "react";
+    import { UserContext } from "./UserContext";
+    import Header from "./Header";
+
+    function App() {
+      const [user, setUser] = useState({ name: "Akshya", role: "Student" });
+
+      return (
+        <UserContext.Provider value={{ user, setUser }}>
+          <Header />
+        </UserContext.Provider>
+      );
+    }
+
+    export default App;
+
+Step 3: Consume Context
+
+    import { useContext } from "react";
+    import { UserContext } from "./UserContext";
+
+    function UserProfile() {
+      const { user, setUser } = useContext(UserContext);
+
+      return (
+        <div>
+          <h2>Name: {user.name}</h2>
+          <h3>Role: {user.role}</h3>
+          <button onClick={() => setUser({ ...user, role: "Developer" })}>
+            Become Developer
+          </button>
+        </div>
+      );
+    }
+
+    export default UserProfile;
+
+------------------------------------------------------------------------
+
+5. When to Use Context API?
+
+-   Good for:
+    -   Theme switching (dark/light)
+    -   Authentication (user data)
+    -   Global settings (language, currency, preferences)
+    -   Any data needed by multiple nested components
+-   Not ideal for:
+    -   Very frequently updated data (like text input) because
+        re-rendering may cause performance issues.
+
+------------------------------------------------------------------------
+
+6. Context vs Alternatives
+
+-   Props: Best for local, simple state passing.
+-   Context API: Best for small-to-medium apps needing global state.
+-   Redux / Zustand / Recoil: Better for large-scale apps with complex
+    state logic, middleware, and debugging needs.
+
+------------------------------------------------------------------------
+
+7. Advanced Patterns with Context
+
+1.  Multiple Contexts
+    -   You can use multiple contexts for different concerns (theme +
+        auth + language).
+    -   Example:
+
+        <ThemeContext.Provider value="dark">
+          <UserContext.Provider value={user}>
+            <App />
+          </UserContext.Provider>
+        </ThemeContext.Provider>
+2.  Custom Hooks with Context
+    -   Create a hook to simplify context usage.
+    -   Example:
+
+        function useUser() {
+          return useContext(UserContext);
+        }
+
+        function Profile() {
+          const { user } = useUser();
+          return <h1>{user.name}</h1>;
+        }
+3.  Combining with Outlet (React Router)
+    -   Protect routes based on context values (like auth).
+    -   Example:
+
+        function PrivateRoute() {
+          const { user } = useUser();
+          return user ? <Outlet /> : <Navigate to="/login" />;
+        }
+
+------------------------------------------------------------------------
+
+8. Performance Considerations
+
+-   Every time the value of a context changes, all consumers re-render.
+-   To optimize:
+    -   Split contexts (don’t store unrelated values together).
+    -   Use memo and useMemo to avoid unnecessary re-renders.
+    -   Example:
+
+        <UserContext.Provider value={useMemo(() => ({ user, setUser }), [user])}>
+          <App />
+        </UserContext.Provider>
+
+------------------------------------------------------------------------
+
+9. Summary
+
+-   Context API eliminates prop drilling.
+-   Great for global state like theme, user auth, or settings.
+-   Simple and built-in, but may not scale well for very complex apps
+    (use Redux or Zustand there).
+-   Combine with hooks and Router <Outlet /> for powerful state +
+    navigation handling.

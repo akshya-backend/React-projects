@@ -1,0 +1,198 @@
+React useState Hook - Deep Dive
+
+1. What is useState?
+
+The useState hook is a fundamental hook in React that allows you to add
+state (data that changes over time) to functional components.
+
+Before React Hooks, only class components could manage state. With
+useState, functional components can also handle state easily.
+
+------------------------------------------------------------------------
+
+2. Syntax of useState
+
+    const [state, setState] = useState(initialValue);
+
+-   state → current value of the state variable
+-   setState → function used to update the state
+-   initialValue → default value of the state
+
+Example:
+
+    const [count, setCount] = useState(0);
+
+Here: - count is the current value (starts at 0) - setCount is the
+function to update it
+
+------------------------------------------------------------------------
+
+3. Updating State
+
+You must always use the updater function (setState) instead of directly
+modifying the state.
+
+❌ Wrong:
+
+    count = count + 1;
+
+✅ Correct:
+
+    setCount(count + 1);
+
+------------------------------------------------------------------------
+
+4. Example: Counter
+
+    import { useState } from "react";
+
+    function Counter() {
+      const [count, setCount] = useState(0);
+
+      return (
+        <div>
+          <h2>{count}</h2>
+          <button onClick={() => setCount(count + 1)}>Increment</button>
+          <button onClick={() => setCount(count - 1)}>Decrement</button>
+          <button onClick={() => setCount(0)}>Reset</button>
+        </div>
+      );
+    }
+
+------------------------------------------------------------------------
+
+5. Functional Updates
+
+If the new state depends on the old state, use a function inside
+setState.
+
+Example:
+
+    setCount(prevCount => prevCount + 1);
+
+This avoids stale state issues, especially inside asynchronous code or
+multiple updates.
+
+------------------------------------------------------------------------
+
+6. Initial State as a Function (Lazy Initialization)
+
+You can pass a function to useState to compute the initial state only
+once.
+
+    const [value, setValue] = useState(() => {
+      console.log("Expensive calculation...");
+      return 100;
+    });
+
+This is useful when the initial value requires expensive computation.
+
+------------------------------------------------------------------------
+
+7. State Can Be Any Type
+
+useState can hold any type: string, number, boolean, object, array, or
+even null.
+
+Example with objects:
+
+    const [user, setUser] = useState({ name: "Akshya", age: 22 });
+
+    setUser(prevUser => ({ ...prevUser, age: 23 }));
+
+Example with arrays:
+
+    const [items, setItems] = useState([]);
+
+    setItems(prevItems => [...prevItems, "New Item"]);
+
+------------------------------------------------------------------------
+
+8. Multiple State Variables
+
+You can use multiple useState hooks for different pieces of state.
+
+    const [count, setCount] = useState(0);
+    const [theme, setTheme] = useState("light");
+
+This is better than storing unrelated data in a single object.
+
+------------------------------------------------------------------------
+
+9. State Updates are Asynchronous
+
+React batches state updates for performance. This means updating state
+does not happen immediately.
+
+Example:
+
+    setCount(count + 1);
+    setCount(count + 1);
+    console.log(count); // still old value!
+
+✅ Fix using functional updates:
+
+    setCount(prev => prev + 1);
+    setCount(prev => prev + 1);
+
+Now the count increments twice correctly.
+
+------------------------------------------------------------------------
+
+10. Example: Form Handling
+
+    function Form() {
+      const [name, setName] = useState("");
+
+      return (
+        <form>
+          <input
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
+          <p>Hello, {name}</p>
+        </form>
+      );
+    }
+
+------------------------------------------------------------------------
+
+11. Common Mistakes with useState
+
+1.  Not using updater function for dependent updates
+
+        setCount(count + 1); // ❌ might cause stale state issues
+        setCount(prev => prev + 1); // ✅ safe
+
+2.  Mutating objects/arrays directly
+
+        user.age = 23; // ❌ won't trigger re-render
+        setUser({ ...user, age: 23 }); // ✅ correct
+
+3.  Expecting synchronous updates
+
+        setCount(5);
+        console.log(count); // ❌ won't show 5 immediately
+
+------------------------------------------------------------------------
+
+12. Best Practices
+
+-   Keep state minimal — only store what you need.
+-   Use multiple useState hooks instead of one complex object if
+    possible.
+-   Use functional updates when the new state depends on the old state.
+-   For deeply nested or global state, consider Context API or a state
+    management library.
+
+------------------------------------------------------------------------
+
+13. Summary
+
+-   useState adds state to functional components.
+-   Returns [value, updater] pair.
+-   State updates are asynchronous and batched.
+-   Use functional updates for dependent state changes.
+-   Works with all data types (numbers, strings, objects, arrays).
+-   Avoid directly mutating state — always use the updater function.

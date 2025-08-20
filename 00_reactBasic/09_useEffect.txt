@@ -1,0 +1,207 @@
+React useEffect Hook - Deep Dive
+
+1. What is useEffect?
+
+The useEffect hook in React lets you perform side effects in functional
+components.
+A side effect is anything that affects something outside the scope of
+the current function, such as: - Fetching data from an API - Subscribing
+to events - Setting up timers/intervals - Updating the DOM manually -
+Interacting with browser storage
+
+It is the combination of componentDidMount, componentDidUpdate, and
+componentWillUnmount lifecycle methods in class components.
+
+------------------------------------------------------------------------
+
+2. Syntax of useEffect
+
+    useEffect(() => {
+      // Side effect logic here
+
+      return () => {
+        // Cleanup logic (optional)
+      };
+    }, [dependencies]);
+
+-   Effect function: Runs after every render (by default).
+-   Cleanup function: Runs before the component unmounts, or before the
+    next effect execution (if dependencies change).
+-   Dependencies array: Controls when the effect runs.
+
+------------------------------------------------------------------------
+
+3. How Dependencies Work
+
+1.  No dependency array
+
+    useEffect(() => {
+      console.log("Runs after every render");
+    });
+
+-   Runs after every render (mount + update).
+
+2.  Empty dependency array []
+
+    useEffect(() => {
+      console.log("Runs only once on mount");
+    }, []);
+
+-   Runs only once (like componentDidMount).
+
+3.  With dependencies
+
+    useEffect(() => {
+      console.log("Runs when `count` changes");
+    }, [count]);
+
+-   Runs whenever count changes.
+
+------------------------------------------------------------------------
+
+4. Example: Fetching Data with useEffect
+
+    import { useState, useEffect } from "react";
+
+    function App() {
+      const [users, setUsers] = useState([]);
+
+      useEffect(() => {
+        fetch("https://jsonplaceholder.typicode.com/users")
+          .then(response => response.json())
+          .then(data => setUsers(data));
+      }, []); // runs once
+
+      return (
+        <ul>
+          {users.map(user => <li key={user.id}>{user.name}</li>)}
+        </ul>
+      );
+    }
+
+------------------------------------------------------------------------
+
+5. Cleanup Function in useEffect
+
+Cleanup is useful for removing subscriptions, timers, or listeners to
+avoid memory leaks.
+
+    useEffect(() => {
+      const timer = setInterval(() => {
+        console.log("Tick");
+      }, 1000);
+
+      return () => {
+        clearInterval(timer); // cleanup
+        console.log("Timer cleared");
+      };
+    }, []);
+
+------------------------------------------------------------------------
+
+6. Common Patterns
+
+6.1 ComponentDidMount (only once)
+
+    useEffect(() => {
+      console.log("Mounted");
+    }, []);
+
+6.2 ComponentDidUpdate (watch specific variable)
+
+    useEffect(() => {
+      console.log("Value changed!");
+    }, [value]);
+
+6.3 ComponentWillUnmount (cleanup)
+
+    useEffect(() => {
+      const handler = () => console.log("resize");
+      window.addEventListener("resize", handler);
+
+      return () => {
+        window.removeEventListener("resize", handler);
+      };
+    }, []);
+
+------------------------------------------------------------------------
+
+7. Advanced Usage
+
+7.1 Multiple useEffect Hooks
+
+You can have multiple useEffect hooks in the same component. They run
+independently.
+
+    useEffect(() => {
+      console.log("User effect");
+    }, [user]);
+
+    useEffect(() => {
+      console.log("Theme effect");
+    }, [theme]);
+
+7.2 Conditional Effects
+
+    useEffect(() => {
+      if (userId) {
+        fetch(`/api/users/${userId}`)
+          .then(res => res.json())
+          .then(setUser);
+      }
+    }, [userId]);
+
+7.3 useEffect vs useLayoutEffect
+
+-   useEffect: Runs asynchronously after the DOM is painted.
+-   useLayoutEffect: Runs synchronously before the paint (blocking,
+    better for DOM measurements).
+
+------------------------------------------------------------------------
+
+8. Common Mistakes with useEffect
+
+1.  Missing dependencies
+
+    useEffect(() => {
+      console.log(user.name); 
+    }, []); // ❌ BUG: if user changes, effect won't run
+
+✅ Fix:
+
+    useEffect(() => {
+      console.log(user.name);
+    }, [user]);
+
+2.  Infinite loops
+
+    useEffect(() => {
+      setCount(count + 1); // ❌ triggers effect again -> infinite loop
+    }, [count]);
+
+✅ Fix: Add condition or use a different state management approach.
+
+3.  Not cleaning up If you don’t clean up event listeners, timers, or
+    subscriptions, you can get memory leaks.
+
+------------------------------------------------------------------------
+
+9. Performance Tips
+
+-   Use useMemo or useCallback for functions/objects in dependencies to
+    avoid unnecessary re-runs.
+-   Split logic across multiple useEffect hooks for clarity.
+-   Prefer useLayoutEffect for DOM measuring tasks.
+
+------------------------------------------------------------------------
+
+10. Summary
+
+-   useEffect replaces lifecycle methods from class components.
+-   It is used for side effects like fetching data, setting
+    subscriptions, or updating the DOM.
+-   Dependencies control when it runs:
+    -   No array → every render
+    -   [] → only once (mount)
+    -   ☒ → when x changes
+-   Always clean up side effects to prevent memory leaks.

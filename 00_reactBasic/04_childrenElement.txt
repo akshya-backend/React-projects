@@ -1,0 +1,113 @@
+1. What is children in React?
+
+In React, children is a special prop automatically passed to every component.
+It contains whatever you place between the opening and closing tags of a component.
+
+Example:
+
+<Parent>
+  <p>Hello</p>
+  <span>World</span>
+</Parent>
+
+
+Here, inside Parent:
+
+props.children // [<p>Hello</p>, <span>World</span>]
+
+2. Characteristics of children
+
+Can be:
+
+A single element
+
+Multiple elements
+
+Nothing at all
+
+Can be JSX elements, strings, numbers, or even functions.
+
+It’s read-only — you should not mutate it directly.
+
+3. Using children
+
+You decide where the children get inserted by using {props.children} in your JSX.
+
+Example:
+
+function Parent({ children }) {
+  return (
+    <div className="parent">
+      <h2>Header</h2>
+      {children} {/* This is where they pop in */}
+    </div>
+  );
+}
+
+4. When to use children
+
+Use children when:
+
+You want a container component that can wrap any arbitrary content.
+
+You don’t know in advance what UI will be inside the component.
+
+Example:
+
+<Card>
+  <p>This is inside the card!</p>
+</Card>
+
+5. Passing both normal props and children
+function Child({ title, children }) {
+  return (
+    <div>
+      <h3>{title}</h3>
+      {children}
+    </div>
+  );
+}
+
+<Child title="Greeting">
+  <p>Hello!</p>
+</Child>
+
+6. Manipulating children with React utilities
+
+React gives you helper methods:
+
+React.Children.map(children, fn) → Safely iterate over children.
+
+React.Children.forEach(children, fn) → Loop without returning.
+
+React.Children.count(children) → Count them.
+
+React.Children.toArray(children) → Convert to an array.
+
+React.cloneElement(child, props) → Clone and add/override props.
+
+Example:
+
+function List({ children }) {
+  return (
+    <ul>
+      {React.Children.map(children, child => <li>{child}</li>)}
+    </ul>
+  );
+}
+
+7. Function-as-children pattern
+
+Sometimes children can be a function:
+
+<DataProvider>
+  {data => <p>{data}</p>}
+</DataProvider>
+
+8. Difference between children and normal props
+
+Normal props → passed explicitly:
+<Component propName={value} />
+
+children → passed implicitly:
+<Component>content</Component>

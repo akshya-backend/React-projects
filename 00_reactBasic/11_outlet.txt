@@ -1,0 +1,82 @@
+In React Router v6, the <Outlet /> component is used for nested routing.
+Think of it as a placeholder that tells React Router “render the child route here.”
+
+🔹 Example without Outlet
+
+If you only use parent routes:
+
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+
+function Dashboard() {
+  return <h2>Dashboard</h2>;
+}
+
+function Settings() {
+  return <h2>Settings</h2>;
+}
+
+export default function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/settings" element={<Settings />} />
+      </Routes>
+    </BrowserRouter>
+  );
+}
+
+
+Here, /dashboard and /settings are separate — no nesting.
+
+🔹 Example with Outlet (Nested Routes)
+import { BrowserRouter, Routes, Route, Link, Outlet } from "react-router-dom";
+
+function DashboardLayout() {
+  return (
+    <div>
+      <h1>Dashboard Layout</h1>
+      <nav>
+        <Link to="overview">Overview</Link> |{" "}
+        <Link to="settings">Settings</Link>
+      </nav>
+
+      {/* 👇 Child routes will render here */}
+      <Outlet />
+    </div>
+  );
+}
+
+function Overview() {
+  return <h2>Overview Page</h2>;
+}
+
+function Settings() {
+  return <h2>Settings Page</h2>;
+}
+
+export default function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        {/* Parent route */}
+        <Route path="/dashboard" element={<DashboardLayout />}>
+          {/* Child routes */}
+          <Route path="overview" element={<Overview />} />
+          <Route path="settings" element={<Settings />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
+  );
+}
+
+🔹 How it works
+
+Visit /dashboard → shows Dashboard Layout (but no child yet).
+
+Visit /dashboard/overview → shows Dashboard Layout + Overview inside <Outlet />.
+
+Visit /dashboard/settings → shows Dashboard Layout + Settings inside <Outlet />.
+
+✅ So <Outlet /> = “render the child route’s component here”.
+It makes layouts reusable across nested routes

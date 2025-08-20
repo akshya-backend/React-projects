@@ -1,0 +1,45 @@
+// 1. What is React?
+
+// React is a JavaScript library for building user interfaces (UIs).
+// It focuses on the view layer of an application (in MVC architecture).
+
+// It was created by Facebook (Meta) in 2013, and is now open-source.
+
+
+// | Feature                      | Meaning                                                               |
+// | ---------------------------- | --------------------------------------------------------------------- |
+// | **Component-Based**          | UI is built from reusable, independent components.                    |
+// | **Declarative**              | You describe *what* UI should look like, React takes care of *how*.   |
+// | **Virtual DOM**              | React keeps a lightweight copy of the DOM in memory for fast updates. |
+// | **Unidirectional Data Flow** | Data flows in one direction (parent → child).                         |
+// | **JSX Syntax**               | Allows writing HTML-like syntax in JavaScript.                        |
+
+
+
+How react internally work 
+
+You Write JSX Code
+       │
+       ▼
+Babel Compiler
+   (Converts JSX into React.createElement calls)
+       │
+       ▼
+React.createElement()
+   (Creates a plain JS object: the React Element)
+       │
+       ▼
+Virtual DOM Tree
+   (In-memory representation of the UI)
+       │
+       ▼
+React Reconciliation
+   (Compares new Virtual DOM with previous Virtual DOM — "diffing")
+       │
+       ▼
+DOM Update Instructions
+   (Only the changed nodes are updated)
+       │
+       ▼
+Browser DOM
+   (UI updates instantly without full reload)

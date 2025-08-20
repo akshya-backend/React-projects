@@ -1,0 +1,31 @@
+.basket{
+  max-width: 100px;
+  max-height: 200px;
+  padding: 70px;
+}
+.basketImg{
+   max-width: 100px;
+   max-height: 100px;
+}
+
+.container{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+.btnCollection{
+   display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+   align-items: center;
+}
+.btnImg{
+  max-width:50px;
+  max-height:50px;
+
+}
+button{
+  max-height: 100px;
+  max-width: 100px;
+  margin: 50px;
+}
